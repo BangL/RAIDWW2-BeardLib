@@ -2,19 +2,17 @@ mod_assets_error: "ERROR!"
 menu_ok: OK
 bm_global_value_mod: MODS
 menu_l_global_value_mod: "This is a modding community item!"
-custom_map_title: "Custom Heist: $map"
+custom_map_title: "Custom Job: $map"
 custom_map_download_available: "Download available"
-custom_map_alert: "Custom Heist Alert"
+custom_map_alert: "Custom Job Alert"
 custom_map_needs_download: |
-  You need to download the heist: $name before continuing, begin download?
+  You need to download the job: $name before continuing, begin download?
   $url
-custom_map_host_old_version: "Cannot begin download of custom heist because the host is running an old version of BeardLib!"
-custom_map_failed_download: "Failed to download custom heist"
-custom_map_missing_updater: "Cannot begin download of custom heist because the map does not have an updater!"
-heist_contact_custom: "Custom Heists"
-heist_contact_custom_description: "Custom heists are completely new heists added to the game and are made by the community"
-custom_map_cant_download: "The heist that the host has set cannot be downloaded, disconnecting."
-custom_map_failed: "Something went wrong while downloading the heist."
+custom_map_host_old_version: "Cannot begin download of custom job because the host is running an old version of BeardLib!"
+custom_map_failed_download: "Failed to download custom job"
+custom_map_missing_updater: "Cannot begin download of custom job because the map does not have an updater!"
+custom_map_cant_download: "The job that the host has set cannot be downloaded, disconnecting."
+custom_map_failed: "Something went wrong while downloading the job."
 beardlib_mods_manager: "BeardLib Mods"
 beardlib_updates_available: "BeardLib Mods Manager: Updates available!"
 beardlib_updates_available_desc: "Visit the BeardLib Mods Manager to update them"

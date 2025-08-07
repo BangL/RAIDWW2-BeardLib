@@ -223,7 +223,6 @@ function FrameworkBase:InitMods()
 end
 
 function FrameworkBase:RegisterHooks()
-	-- self:AddCustomContact()
 	self:SortMods()
     for _, mod in pairs(self._sorted_mods) do
         if not mod._disabled and mod._modules then
@@ -313,19 +312,6 @@ function FrameworkBase:RemoveMod(folder_name)
 	end
 end
 
--- function FrameworkBase:AddCustomContact()
--- 	if not FrameworkBase._added_contact and ContactModule then -- FIXME
--- 		FrameworkBase._added_contact = true
--- 		ContactModule:new(BeardLib, {
--- 			id = "custom",
--- 			name_id = "heist_contact_custom",
--- 			description_id = "heist_contact_custom_description",
--- 			package = "packages/contact_bain",
--- 			assets_gui = "guis/mission_briefing/preload_contact_bain"
--- 		}):RegisterHook()
--- 	end
--- end
-
 MapFramework = MapFramework or BeardLib:Class(FrameworkBase)
 MapFramework._ignore_folders = {backups = true, prefabs = true}
 MapFramework._directory = BeardLib.config.maps_dir
@@ -337,7 +323,7 @@ function MapFramework:GetMapByJobId(job_id)
     for _, map in pairs(self._loaded_mods) do
         if map._modules then
             for _, module in pairs(map._modules) do
-                if module.type_name == "narrative" and module._config and module._config.id == job_id then
+                if module.type_name == "job" and module._config and module._config.id == job_id then
                     return map
                 end
             end

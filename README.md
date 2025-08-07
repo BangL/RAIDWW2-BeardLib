@@ -1,7 +1,7 @@
 # RAIDWW2-BeardLib
 A large library that assists in mod creation.
 - Script File Manipulation.
-- Custom Heist framework
+- Custom Job framework
 - Modules Framework
 - Easy ability to add content
 

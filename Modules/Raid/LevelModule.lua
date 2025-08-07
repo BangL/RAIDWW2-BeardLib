@@ -144,13 +144,13 @@ end
 function LevelModule:AddLevelDataToTweak(l_self)
     local id = tostring(self._config.id)
     l_self[id] = table.merge(clone(self._config), {
-        name_id = self._config.name_id or ("heist_" .. id .. "_name"),
-        briefing_id = self._config.brief_id or ("heist_" .. id .. "_brief"),
+        name_id = self._config.name_id or ("job_" .. id .. "_name"),
+        briefing_id = self._config.brief_id or ("job_" .. id .. "_brief"),
         world_name = self._levels_less_path,
        -- ai_group_type = l_self.ai_groups[self._config.ai_group_type] or l_self.ai_groups.default,
         --intro_event = self._config.intro_event or "nothing",
         --outro_event = self._config.outro_event or "nothing",
-        --music = self._config.music or "heist",
+        --music = self._config.music or "job",
         custom_packages = self._config.packages or self._config.custom_packages,
         mod_path = self._mod.ModPath,
         custom = true

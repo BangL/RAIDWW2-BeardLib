@@ -1,4 +1,4 @@
--- Contains a bunch of hooks to make custom heists work Mostly client-side code.
+-- Contains a bunch of hooks to make custom jobs work Mostly client-side code.
 -- Anything >100 lines of code should be its own file.
 
 local F = table.remove(RequiredScript:split("/"))

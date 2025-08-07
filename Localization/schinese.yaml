@@ -11,8 +11,6 @@ custom_map_needs_download: |
 custom_map_host_old_version: "无法下载该自定义劫案，因为主机运行的是旧版本的 BeardLib！"
 custom_map_failed_download: "无法下载该自定义劫案"
 custom_map_missing_updater: "因为该地图没有设定更新器，所以无法下载该自定义劫案！"
-heist_contact_custom: "自定义劫案"
-heist_contact_custom_description: "已将该自定义社区劫案添加到游戏内"
 custom_map_cant_download: "您加入的主机设定禁止下载该劫案，正在断开连接..."
 custom_map_failed: "下载该劫案时出现了某些问题。"
 beardlib_mods_manager: "BeardLib 模组管理器"

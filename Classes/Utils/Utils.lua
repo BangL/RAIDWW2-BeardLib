@@ -270,7 +270,7 @@ function Utils:GetMapByJobId(job_id)
     for _, mod in pairs(BeardLib.Mods) do
         if mod._modules then
             for _, module in pairs(mod._modules) do
-                if module.type_name == "narrative" and module._config and module._config.id == job_id then
+                if module.type_name == "job" and module._config and module._config.id == job_id then
                     return mod
                 end
             end

@@ -2,19 +2,17 @@ mod_assets_error: "FEHLER!"
 menu_ok: OK
 bm_global_value_mod: MODS
 menu_l_global_value_mod: "Das ist in Modding Community Item!"
-custom_map_title: "Custom Heist: $map"
+custom_map_title: "Custom Job: $map"
 custom_map_download_available: "Download verfügbar"
-custom_map_alert: "Custom Heist Warnung"
+custom_map_alert: "Custom Job Warnung"
 custom_map_needs_download: |
-    Du musst den Heist downloaden um fortzufahren, Download starten?
+    Du musst den Job downloaden um fortzufahren, Download starten?
     $url
 custom_map_host_old_version: "Download kann nicht gestartet werden, da der Host eine veraltete Version von BeardLib nutzt!"
-custom_map_failed_download: "Download des Heists fehlgeschlagen"
-custom_map_missing_updater: "Der Download des Heists kann nicht gestartet werden, da die Map keinen Updater hat!"
-heist_contact_custom: "Custom Heists"
-heist_contact_custom_description: "Custom Heists sind komplett neue, von der Community erstellte Heists."
-custom_map_cant_download: "Der Heist, den der Host festgelegt hat, kann nicht heruntergeladen werden."
-custom_map_failed: "Beim runterladen vom Heist ist etwas schief gelaufen."
+custom_map_failed_download: "Download des Jobs fehlgeschlagen"
+custom_map_missing_updater: "Der Download des Jobs kann nicht gestartet werden, da die Map keinen Updater hat!"
+custom_map_cant_download: "Der Job, den der Host festgelegt hat, kann nicht heruntergeladen werden."
+custom_map_failed: "Beim runterladen vom Job ist etwas schief gelaufen."
 beardlib_mods_manager: "BeardLib Mods"
 beardlib_updates_available: "BeardLib Mods Manager: Updates verfügbar!"
 beardlib_updates_available_desc: "Öffne den BeardLib Mods Manager zum updaten"

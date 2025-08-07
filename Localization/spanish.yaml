@@ -11,8 +11,6 @@ custom_map_needs_download: |
 custom_map_host_old_version: "¡No se puede iniciar la descarga porque el anfitrión esta usando una versión antigua de BeardLib!"
 custom_map_failed_download: "Descarga fallida"
 custom_map_missing_updater: "¡No se puede iniciar la descarga porque el mapa no tiene un actualizador!"
-heist_contact_custom: "Mapas personalizados"
-heist_contact_custom_description: "Los 'Mapas personalizados' son atracos creados completamente por la Comunidad de PAYDAY 2"
 custom_map_cant_download: "El mapa del anfitrión no pudo ser descargado. Desconectando..."
 custom_map_failed: "Algo salió mal al intentar descargar el mapa."
 beardlib_mods_manager: "Administrador de Módulos de BeardLib"

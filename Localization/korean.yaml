@@ -11,8 +11,6 @@ custom_map_needs_download: |
 custom_map_host_old_version: "호스트가 이전 버전의 BeardLib을 실행하고 있어 커스텀 하이스트를 다운로드 할 수 없습니다!"
 custom_map_failed_download: "커스텀 하이스트를 다운로드하지 못했습니다."
 custom_map_missing_updater: "해당 맵에 업데이터가 없기 때문에 커스텀 하이스트 다운로드를 시작 할 수 없습니다!"
-heist_contact_custom: "커스텀 하이스트"
-heist_contact_custom_description: "커스텀 하이스트는 게임에 추가되는 완전히 새로운 하이스트이며 커뮤니티에서 만듭니다."
 custom_map_cant_download: "호스트가 설정한 하이스트를 다운로드할 수 없습니다. 연결이 끊겼습니다."
 custom_map_failed: "하이스트를 다운로드하는 동안 문제가 발생했습니다."
 beardlib_mods_manager: "BeardLib 모드 매니저"
