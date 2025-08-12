@@ -42,12 +42,6 @@ elseif F == "killzonemanager" then
 		end
 	end)
 
-	Hooks:PreHook(ElementKillZone, "on_executed", "BeardLib_ElementKillZone_on_executed_tmpfix", function(self, instigator)
-		if instigator.character_damage then
-			instigator.chracter_damage = instigator.character_damage
-		end
-	end)
-
 	Hooks:PostHook(KillzoneManager, "_add_unit", "BeardLib.AddUnit", function(self, unit, zone_type)
 		if zone_type == "kill" then
 			self._units[unit:key()] = {
