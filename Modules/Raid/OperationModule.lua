@@ -90,7 +90,10 @@ function OperationModule:AddOperationData(operations)
         local valid = {}
         for _, job_id in ipairs(row) do
             local job = self:GetJob(operations, job_id)
-            if type(job) ~= "table" or job.job_type ~= OperationsTweakData.JOB_TYPE_RAID then
+            if events[job_id] then
+                -- the events are keyed by their job and the game never picks a job twice, a second one would hang/crash the start
+                self:Err("The job '%s' is used by more than one event of the operation '%s', only the first one is used", job_id, id)
+            elseif type(job) ~= "table" or job.job_type ~= OperationsTweakData.JOB_TYPE_RAID then
                 self:Err("The event '%s' of the operation '%s' is no job (raid) of this project!", job_id, id)
             else
                 -- the event is the job itself, only the texts of the progress screens are added
