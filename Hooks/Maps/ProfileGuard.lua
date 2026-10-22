@@ -1,6 +1,7 @@
 -- Keeps custom jobs and levels out of the saved profile (see the ProfileGuard option): no statistics, progression or
 -- breadcrumbs keyed by their ids. Kills, xp and the like are not touched, those are not custom.
--- The data is removed from the profile right when it is put together for saving, wherever it was written.
+-- The data is removed from the profile right when it is put together for saving, wherever it was written. The cache holds
+-- references to the live tables of the managers, so the profile gets a scrubbed copy and the running game is left alone.
 
 --- Ids of all custom jobs and levels.
 --- @return table ids, table list
@@ -59,8 +60,8 @@ local function scrub(tbl, ids, seen)
     end
 end
 
---- The save slots of operations (job_manager.slots) hold the whole job as value, not keyed by its id. The profile gets a
---- copy of the slots without the ones of custom operations, the live slots are left alone.
+--- The save slots of operations (job_manager.slots) hold the whole job as value, not keyed by its id: the slots of custom
+--- operations are dropped.
 local function scrub_save_slots(data, ids)
     local job_manager = data.job_manager
     if type(job_manager) ~= "table" or type(job_manager.slots) ~= "table" then
@@ -92,6 +93,9 @@ local save_cache = SavefileManager._save_cache
 function SavefileManager:_save_cache(slot, ...)
     local result = save_cache(self, slot, ...)
     local meta_data = self:_meta_data(slot)
-    BeardLib:ScrubProfileData(meta_data and meta_data.cache)
+    if meta_data and type(meta_data.cache) == "table" and BeardLib.Options:GetValue("ProfileGuard") then
+        meta_data.cache = deep_clone(meta_data.cache)
+        BeardLib:ScrubProfileData(meta_data.cache)
+    end
     return result
 end
