@@ -5,8 +5,10 @@ function ScriptReplacementsModule:PostInit()
 	self.ScriptDirectory = self._config.directory and Path:Combine(self._mod.ModPath, self._config.directory) or self._mod.ModPath
     for _, v in ipairs(self._config) do
         if v._meta == "mod" then
-            local options = v.options or {}
-            options = table.merge(options, v)
+            -- merge into a copy: merging into v.options itself stores it inside itself (v.options.options)
+            -- and the next call, e.g. a level that is started a second time, recurses forever
+            local options = table.merge(clone(v.options or {}), v)
+            options.options = nil
 
             local clbk = options.use_clbk or options.clbk
             local use_clbk
