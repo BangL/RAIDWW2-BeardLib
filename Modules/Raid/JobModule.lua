@@ -200,7 +200,10 @@ function JobModule:AddJobData(operations)
         music_id = data.music_id or "camp",
         -- the camp objective (go to the mission table) is looked up as [id]_hl/_desc, vanilla only has strings for its own raids
         camp_objective_id = data.camp_objective_id or "obj_camp_goto_raid",
+        -- one follows the other: the description is derived from the flag and the flag from the description (stealthable
+        -- raids start in stealth), an attribute that is set always wins
         stealth_description = data.stealth_description or (data.start_in_stealth and OperationsTweakData.RAID_STARTS_STEALTHABLE or OperationsTweakData.RAID_NOT_STEALTHABLE),
+        start_in_stealth = data.start_in_stealth or (data.stealth_description ~= nil and data.stealth_description ~= OperationsTweakData.RAID_NOT_STEALTHABLE) or nil,
         mission_state = data.mission_state or OperationsTweakData.STATE_LOCATION_MISSION_SELECTED,
         loading = data.loading or clone(JobModule.DEFAULT_LOADING),
         photos = self:GetPhotos(),
@@ -218,7 +221,9 @@ function JobModule:AddJobData(operations)
     end
 
     -- consumable="true": an outlaw raid, it is unlocked with the outlaw intel (documents) and used up when it is played
+    -- (an attribute is a string, "false" must not count)
     data.consumable = (data.consumable == true or data.consumable == "true") or nil
+
     -- excluded_continents="a,b": continents of the level that are not created when it is played as a raid (vanilla: "operation")
     data.excluded_continents = to_list(self._config.excluded_continents)
 
