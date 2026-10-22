@@ -202,7 +202,11 @@ function ModCore:AddModule(module_tbl)
                     self:Err("An error occurred on initilization of module: %s. Error:\n%s", meta, tostring(node_obj))
                 end
             elseif not (self._config.ignore_errors or CoreLoadingSetup) then
-                self:Err("Unable to find module with key %s", meta)
+                if meta == "Narrative" then
+                    self:Err("Narrative modules are not supported on RAID (PAYDAY 2 only). Replace it with a <job> module, see 'Migrating from narratives' in the BeardLib README")
+                else
+                    self:Err("Unable to find module with key %s", meta)
+                end
             end
         end
     end

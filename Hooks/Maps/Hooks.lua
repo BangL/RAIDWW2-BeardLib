@@ -265,17 +265,6 @@ elseif F == "groupaitweakdata" then
         end
         return _read_mission_preset(self, tweak_data, ...)
     end
--- ----------------------------------------------------------------
--- FIXME: need replacement in raid, when actually showing custom jobs?
--- elseif F == "menumanager" then
--- 	local o_refresh = MenuManager.refresh_level_select
--- 	function MenuManager.refresh_level_select(...)
--- 		if Global.game_settings.level_id then
--- 			return o_refresh(...)
--- 		else
--- 			BeardLib:log("[Warning] Refresh level select was called while level id was nil!")
--- 		end
--- 	end
 ----------------------------------------------------------------
 elseif F == "gameplaycentralmanager" then
 	function GamePlayCentralManager:add_move_unit(unit, from, to, speed, done_callback)
