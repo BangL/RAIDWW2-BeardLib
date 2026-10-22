@@ -39,6 +39,7 @@ function Sync:DownloadMap(level_name, job_id, udata, done_callback)
 					map.failed_map_downloaed = SimpleClbk(done_callback, false)
 					map.done_map_download = function()
 						BeardLib.Frameworks.Base:Load()
+						BeardLib.Frameworks.Base:InitMods() -- the modules (job, level) of the new mod, skips the initialized ones
 						BeardLib.Frameworks.Base:RegisterHooks()
 						if done_callback then
 							done_callback(tweak_data.operations.missions[job_id] ~= nil)
