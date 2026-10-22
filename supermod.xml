@@ -36,6 +36,14 @@
                 <post hook_id="core/lib/managers/coreworldcollection" :script_path="CoreWorldCollection.lua"/>
                 <post hook_id="lib/managers/progressionmanager" :script_path="ProgressionManager.lua"/>
                 <post hook_id="lib/managers/savefilemanager" :script_path="ProfileGuard.lua"/>
+                <group :script_path="Network.lua">
+                    <post hook_id="lib/managers/dlcmanager"/>
+                    <post hook_id="lib/network/base/networkpeer"/>
+                    <post hook_id="lib/network/base/session_states/hoststateingame"/>
+                    <post hook_id="lib/network/base/handlers/connectionnetworkhandler"/>
+                    <post hook_id="lib/managers/raidjobmanager"/>
+                    <post hook_id="lib/network/matchmaking/networkmatchmakingsteam"/>
+                </group>
             </group>
 
             <group :script_path="UI/">

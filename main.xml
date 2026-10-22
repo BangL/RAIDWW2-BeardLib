@@ -65,6 +65,7 @@
 				<class file="XML.lua"/>
 				<class file="Builders.lua"/>
 				<class file="Sync.lua"/>
+				<class file="Network.lua"/>
 			</classes>
 	
 			<classes directory="Managers">

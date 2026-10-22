@@ -40,11 +40,6 @@ function Sync:DownloadMap(level_name, job_id, udata, done_callback)
 					map.done_map_download = function()
 						BeardLib.Frameworks.Base:Load()
 						BeardLib.Frameworks.Base:RegisterHooks()
-						-- FIXME?
-						log("FIXME: refresh online games")
-						blt.flush_log()
-						-- managers.job:_check_add_heat_to_jobs()
-						-- managers.crimenet:find_online_games(Global.game_settings.search_friends_only)
 						if done_callback then
 							done_callback(tweak_data.operations.missions[job_id] ~= nil)
 						end
