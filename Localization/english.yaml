@@ -8,6 +8,10 @@ custom_map_alert: "Custom Job Alert"
 custom_map_needs_download: |
   You need to download the job: $name before continuing, begin download?
   $url
+custom_map_needs_update: |
+  The host plays another version of the job: $name, begin download of the update?
+  $url
+custom_map_updated_restart: "The job was updated. Restart the game to play it."
 custom_map_host_old_version: "Cannot begin download of custom job because the host is running an old version of BeardLib!"
 custom_map_failed_download: "Failed to download custom job"
 custom_map_missing_updater: "Cannot begin download of custom job because the map does not have an updater!"

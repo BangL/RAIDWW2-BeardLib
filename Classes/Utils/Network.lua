@@ -174,13 +174,28 @@ function Net:JobString(job_id)
             update = mod_assets._data
         end
     end
+    local version = self:MapVersion(job_id)
     local function clean(s)
         return (tostring(s):gsub("[|]", " "))
     end
     return table.concat({
         clean(job_id), clean(level_id), clean(Global.game_settings.difficulty or ""), clean(name),
-        clean(update.id or "null"), clean(update.provider or "null")
+        clean(update.id or "null"), clean(update.provider or "null"), clean(version or "null")
     }, "|")
+end
+
+--- The installed version of the map of a job, nil if it does not say.
+function Net:MapVersion(job_id)
+    local mod = BeardLib.Utils:GetMapByJobId(job_id)
+    local mod_assets = mod and mod:GetModule(ModAssetsModule.type_name)
+    local version = mod_assets and mod_assets.version
+    return version ~= nil and tostring(version) or nil
+end
+
+--- The job is installed, but in another version than the host's.
+function Net:IsOutdated(job_id, info)
+    local version = self:MapVersion(job_id)
+    return info ~= nil and info.version ~= nil and version ~= nil and info.version ~= version
 end
 
 function Net:SendJobInfo(job_id, peer)
@@ -365,12 +380,13 @@ end
 
 --- The info of a job as sent by JobString.
 function Net:ParseJobString(data)
-    local job_id, level_id, difficulty, name, update_id, provider = unpack(string.split(data or "", "|"))
+    local job_id, level_id, difficulty, name, update_id, provider, version = unpack(string.split(data or "", "|"))
     if not job_id or job_id == "" then
         return
     end
     return job_id, {
         level_id = level_id, difficulty = difficulty, name = name,
+        version = version and version ~= "null" and version or nil,
         update = update_id and update_id ~= "null" and {id = update_id, provider = provider ~= "null" and provider or nil} or nil,
     }
 end
@@ -385,11 +401,37 @@ function Net:OnJobInfo(sender, data)
         return
     end
     self._job_info[job_id] = info
-    if self:HasJob(job_id) then
+    if self:HasJob(job_id) and not self:IsOutdated(job_id, info) then
         tell_host(job_id, true)
+    elseif self:HasJob(job_id) then
+        self:AskUpdate(job_id)
     elseif self._pending[job_id] then
         self:AskDownload(job_id)
     end
+end
+
+--- Client: the job is there, but the host has another version. A loaded map is not replaced while the game runs,
+--- so the new version is only there after a restart and the host is told that this peer cannot play it for now.
+function Net:AskUpdate(job_id)
+    local key = job_id .. "|" .. tostring(self._job_info[job_id].version)
+    if self._asked[key] then
+        return
+    end
+    self._asked[key] = true
+    local info = self._job_info[job_id]
+    local function done(loaded)
+        if loaded then
+            self:Notify(loc("custom_map_updated_restart"))
+        end
+        self._asked[key] = nil
+        tell_host(job_id, false)
+    end
+    if not info.update then
+        self:Notify(loc("custom_map_missing_updater"))
+        done(false)
+        return
+    end
+    BeardLib.Utils.Sync:DownloadMap(info.name, job_id, info.update, done, true)
 end
 
 function Net:AskDownload(job_id)
@@ -455,11 +497,16 @@ function Net:PreJoin(room_id, continue)
         return false
     end
     local job_id, info = self:ParseJobString(value)
-    if not job_id or self:HasJob(job_id) then
+    local outdated = job_id and self:IsOutdated(job_id, info)
+    if not job_id or (self:HasJob(job_id) and not outdated) then
         return false
     end
     managers.system_menu:close("join_server")
     local function done(loaded, notified)
+        if outdated and loaded then -- the new version is there after a restart
+            self:Notify(loc("custom_map_updated_restart"))
+            loaded, notified = false, true
+        end
         if loaded and self:HasJob(job_id) then
             managers.menu:show_joining_lobby_dialog()
             continue()
@@ -474,7 +521,7 @@ function Net:PreJoin(room_id, continue)
         self:Notify(loc("custom_map_missing_updater"))
         done(false, true)
     else
-        BeardLib.Utils.Sync:DownloadMap(info.name, job_id, info.update, done)
+        BeardLib.Utils.Sync:DownloadMap(info.name, job_id, info.update, done, outdated)
     end
     return true
 end

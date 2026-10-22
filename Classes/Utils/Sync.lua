@@ -15,7 +15,7 @@ function Sync:SyncGameSettings(peer_id)
     end
 end
 
-function Sync:DownloadMap(level_name, job_id, udata, done_callback)
+function Sync:DownloadMap(level_name, job_id, udata, done_callback, updating)
     if not udata then
         return
 	end
@@ -27,7 +27,7 @@ function Sync:DownloadMap(level_name, job_id, udata, done_callback)
 		end
 		QuickDialog({
 			title = managers.localization:text("custom_map_alert"),
-			message = managers.localization:text("custom_map_needs_download", {url = download_url, name = level_name}),
+			message = managers.localization:text(updating and "custom_map_needs_update" or "custom_map_needs_download", {url = download_url, name = level_name}),
 			no = "No",
 			no_callback = SimpleClbk(done_callback, false, true),
 			items = {
