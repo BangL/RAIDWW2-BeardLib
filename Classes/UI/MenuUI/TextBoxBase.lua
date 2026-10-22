@@ -200,8 +200,9 @@ function TextBoxBase:key_hold(text, k)
                     return
                 end
 
+                -- the pasted text, not the key that was pressed
                 for _, c in pairs(self.forbidden_chars) do
-                    if s:find(c) ~= nil then
+                    if copy:find(c, 1, true) ~= nil then
                         return
                     end
                 end
@@ -309,7 +310,7 @@ function TextBoxBase:enter_text(text, s)
         return
     end
     for _, c in pairs(self.forbidden_chars) do
-        if s:find(c) ~= nil then
+        if s:find(c, 1, true) ~= nil then
             return
         end
     end
