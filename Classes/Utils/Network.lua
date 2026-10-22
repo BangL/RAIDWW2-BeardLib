@@ -432,8 +432,16 @@ function Net:PublishLobby(matchmake)
     end
     local job = managers.raid_job and managers.raid_job:current_job()
     local value = job and job.custom and self:JobString(job.job_id) or ""
-    if attributes.beardlib_job ~= value then
-        attributes.beardlib_job = value
+    local changed = attributes.beardlib_job ~= value
+    attributes.beardlib_job = value
+    -- The server browser reads the name of a running operation from the tweak data of the browsing client without a check
+    -- (MissionJoinGui:_set_game_description_data), an operation it does not have crashes it. A custom operation is
+    -- announced as a raid, that lookup is checked.
+    if job and job.custom and tonumber(attributes.mission_type) == OperationsTweakData.JOB_TYPE_OPERATION then
+        attributes.mission_type = OperationsTweakData.JOB_TYPE_RAID
+        changed = true
+    end
+    if changed then
         matchmake.lobby_handler:set_lobby_data(attributes)
     end
 end
