@@ -47,6 +47,8 @@ beardlib_dev_mode_help: |
     Der Entwickler Modus zeigt mehr Fehler im Fehler Dialog an (z.B wenn eine Datei nicht lädt).
     Du solltest diesen Modus verwenden, wenn du BeardLib Mods jeder Art erstellst, damit du Probleme besser lösen kannst.
     Normalerweise wird dies im BLT log geloggt.
+beardlib_profile_guard: "Profilschutz"
+beardlib_profile_guard_help: "Hält Custom-Raids und -Level aus deinem gespeicherten Profil heraus: Unter ihren Namen wird nichts abgelegt (Statistiken, Fortschritt, ...). Kills, Erfahrung usw. werden normal gezählt."
 beardlib_important_notice_help: "Soll BeardLib dich benachrichtigen, wenn ein Update für eine wichtige Mod verfügbar ist?"
 beardlib_write_failed: "Fehler beim Schreiben in den Pfad :/"
 beardlib_achieves_title: "Custom Achievements"

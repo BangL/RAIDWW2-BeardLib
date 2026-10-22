@@ -35,6 +35,7 @@
                 <post hook_id="core/lib/utils/dev/editor/coreworlddefinition" :script_path="CoreWorldDefinition.lua"/>
                 <post hook_id="core/lib/managers/coreworldcollection" :script_path="CoreWorldCollection.lua"/>
                 <post hook_id="lib/managers/progressionmanager" :script_path="ProgressionManager.lua"/>
+                <post hook_id="lib/managers/savefilemanager" :script_path="ProfileGuard.lua"/>
             </group>
 
             <group :script_path="UI/">

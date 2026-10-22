@@ -422,6 +422,13 @@ function BeardLibModsMenu:OpenSettings()
                 on_callback = ClassClbk(self, "SetOption")
             })
             holder:Toggle({
+                name = "ProfileGuard",
+                text = "beardlib_profile_guard",
+                help = "beardlib_profile_guard_help",
+                value = BeardLib.Options:GetValue("ProfileGuard"),
+                on_callback = ClassClbk(self, "SetOption")
+            })
+            holder:Toggle({
                 name = "DevMode",
                 text = "beardlib_dev_mode",
                 help = "beardlib_dev_mode_help",

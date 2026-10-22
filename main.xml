@@ -28,6 +28,7 @@
 				<option name="MenuColor" type="color" default_value="Color('DE4A3E')"/>
 				<option name="ImportantNotice" type="boolean" default_value="true"/>
 				<option name="ShowErrorsDialog" type="boolean" default_value="true"/>
+				<option name="ProfileGuard" type="boolean" default_value="true"/>
 				<option name="DevMode" type="boolean" default_value="false"/>
 				<option name="GithubUpdates" type="boolean" default_value="false"/>
 				<option name="LogSounds" type="boolean" default_value="false"/>
