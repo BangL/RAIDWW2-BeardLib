@@ -459,18 +459,20 @@ function Net:PreJoin(room_id, continue)
         return false
     end
     managers.system_menu:close("join_server")
-    local function done(loaded)
+    local function done(loaded, notified)
         if loaded and self:HasJob(job_id) then
             managers.menu:show_joining_lobby_dialog()
             continue()
         else
             managers.worldcollection.level_transition_in_progress = false
-            managers.menu:show_does_not_own_heist() -- same as for a host that cannot be joined without the job
+            if not notified then -- two stacked dialogs cannot be closed
+                managers.menu:show_does_not_own_heist() -- same as for a host that cannot be joined without the job
+            end
         end
     end
     if not info.update then
         self:Notify(loc("custom_map_missing_updater"))
-        done(false)
+        done(false, true)
     else
         BeardLib.Utils.Sync:DownloadMap(info.name, job_id, info.update, done)
     end
