@@ -136,14 +136,15 @@ function LevelModule:Load()
         end
     end
 
-    if self._config.script_data_mods then
-        local script_mods = ScriptReplacementsModule:new(self._mod, self._config.script_data_mods)
-        script_mods:PostInit()
-	end
-
-    -- hooks and classes must not be loaded twice, a streamed level is loaded every time it is started
+    -- script replacements, hooks and classes must not be registered twice, a streamed level is loaded every time it is started
+    -- (the file manager keeps every script replacement it gets, they would pile up)
     if not self._code_loaded then
         self._code_loaded = true
+
+        if self._config.script_data_mods then
+            local script_mods = ScriptReplacementsModule:new(self._mod, self._config.script_data_mods)
+            script_mods:PostInit()
+        end
 
         if self._config.hooks then
             HooksModule:new(self._mod, self._config.hooks)
