@@ -48,6 +48,7 @@ elseif F == "connectionnetworkhandler" then
                 tweak_data:set_difficulty(difficulty)
                 Net:EnsureJob(job_id, function()
                     if Net._wanted_job == job_id then
+                        Net:ApplyEvents(job_id)
                         managers.raid_job:local_set_selected_job(job_id)
                     end
                 end)
@@ -72,6 +73,18 @@ elseif F == "connectionnetworkhandler" then
             return
         end
         return sync_current_job(self, job_id, sender)
+    end
+
+    -- the rolled events of an operation this client does not have yet (it would index a missing operation)
+    local sync_randomize_operation = ConnectionNetworkHandler.sync_randomize_operation
+    function ConnectionNetworkHandler:sync_randomize_operation(operation_id, string_delimited, sender)
+        if operation_id and operation_id ~= "" and not Net:HasJob(operation_id) then
+            if self._verify_sender(sender) then
+                Net._events[operation_id] = string_delimited
+            end
+            return
+        end
+        return sync_randomize_operation(self, operation_id, string_delimited, sender)
     end
 
     local sync_external_start_mission = ConnectionNetworkHandler.sync_external_start_mission
@@ -137,6 +150,37 @@ elseif F == "raidjobmanager" then
             end
         end
         return set_selected_job(self, job_id, job_data, ...)
+    end
+
+    -- A client that joins while a job is selected gets it with the state of the session, vanilla would take the unknown job
+    -- for granted and crash. It is left out here and set once the job is there (download).
+    local sync_load = RaidJobManager.sync_load
+    function RaidJobManager:sync_load(data)
+        local state = data and data.RaidJobManager
+        local wanted, events_index
+        if state then
+            if state.current_job_id and state.current_job_id ~= "" and not Net:HasJob(state.current_job_id) then
+                state.current_job_id, state.current_job_event = nil, nil -- a running job is not joined without it, see Net:JoinDenyReason
+            end
+            if state.selected_job_id and state.selected_job_id ~= "" and not Net:HasJob(state.selected_job_id) then
+                wanted, events_index = state.selected_job_id, state.events_index
+                state.selected_job_id, state.events_index = nil, nil
+            end
+        end
+        local result = sync_load(self, data)
+        if wanted then
+            Net._wanted_job = wanted
+            if events_index then
+                Net._events[wanted] = table.concat(events_index, "|")
+            end
+            Net:EnsureJob(wanted, function()
+                if Net._wanted_job == wanted then
+                    Net:ApplyEvents(wanted)
+                    managers.raid_job:local_set_selected_job(wanted)
+                end
+            end)
+        end
+        return result
     end
 
     -- ... and does not start it before everyone has it

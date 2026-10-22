@@ -53,6 +53,8 @@ beardlib_dev_mode_help: |
   Developer mode adds more errors to show in the errors dialog (Like if a file failed to load).
   You should use this mode when developing any type of BeardLib mod so you can resolve the issues.
   Normally, this is logged into the BLT log.
+# RAID has no text for this vanilla dialog (join request denied, code 4)
+dialog_does_not_own_heist: "The host plays a custom job that you do not have (or cannot get right now). You cannot join this game."
 beardlib_profile_guard: "Profile guard"
 beardlib_profile_guard_help: "Keeps custom raids and levels out of your saved profile: nothing is stored under their names (statistics, progression, ...). Kills, experience and so on are counted as usual."
 beardlib_important_notice_help: "Should BeardLib notify you when there's an update for an important mod?"

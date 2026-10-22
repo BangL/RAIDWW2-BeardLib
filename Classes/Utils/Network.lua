@@ -21,6 +21,7 @@ Net.START_WAIT_TIMEOUT = 300 -- seconds the host waits for downloads
 Net._job_info = {} -- client: job id -> info sent by the host
 Net._pending = {} -- client: job id -> functions to run once the job is there
 Net._asked = {} -- client: job id -> true once the download prompt was shown
+Net._events = {} -- client: operation id -> the events the host rolled, kept until the operation is there
 
 local function loc(id, macros)
     return managers.localization:text(id, macros)
@@ -205,6 +206,16 @@ function Net:OnHave(sender, data)
     peer._beardlib_maps[job_id] = has == "1"
     peer._beardlib_declined = peer._beardlib_declined or {}
     peer._beardlib_declined[job_id] = has ~= "1" or nil
+    local job = tweak_data.operations.missions[job_id]
+    if has ~= "1" and job then
+        -- the host should not find out when it tries to start: this peer will not be ready for this job
+        managers.notification:add_notification({
+            id = "beardlib_declined_" .. tostring(peer:id()),
+            duration = 10,
+            shelf_life = 10,
+            text = loc("beardlib_net_declined", {names = peer:name(), job = loc(job.name_id)}),
+        })
+    end
 end
 
 --- Host, every frame: peers that joined (or got the job after joining) get the job info.
@@ -328,6 +339,15 @@ local function tell_host(job_id, has)
     if session and Network:is_client() then
         LuaNetworking:SendToPeer(1, Net.MSG_HAVE, job_id .. "|" .. (has and "1" or "0"))
     end
+end
+
+--- Client: the events the host rolled for an operation it does not have yet are set once it is there.
+function Net:ApplyEvents(job_id)
+    local events = self._events[job_id]
+    if events and self:HasJob(job_id) then
+        tweak_data.operations:set_operation_indexes_delimited(job_id, events)
+    end
+    self._events[job_id] = nil
 end
 
 --- Client: runs func once the job is available, downloads it first if needed.
