@@ -13,7 +13,6 @@ JobModule.DEFAULT_LOADING = {image = "raid_loading_tutorial", text = "loading_ge
 function JobModule:init(...)
     self.clean_table = table.add(clone(self.clean_table), {
         {param = "photos", action = "number_indexes"},
-        {param = "bounty_filters", action = "number_indexes"},
         {param = "excluded_continents", action = "number_indexes"},
         {param = "progression_groups", action = "number_indexes"},
     })
@@ -220,11 +219,6 @@ function JobModule:AddJobData(operations)
 
     -- excluded_continents="a,b": continents of the level that are not created when it is played as a raid (vanilla: "operation")
     data.excluded_continents = to_list(self._config.excluded_continents)
-    -- bounty_forbid_buffs="a,b": buffs (BuffEffectManager.EFFECT_* values) a bounty challenge card of this raid must not have
-    local forbid_buffs = to_list(self._config.bounty_forbid_buffs)
-    if forbid_buffs then
-        data.bounty_filters = table.merge(type(data.bounty_filters) == "table" and data.bounty_filters or {}, {forbid_buffs = forbid_buffs})
-    end
 
     if self._config.merge_data then
         table.merge(data, BeardLib.Utils:RemoveMetas(self._config.merge_data, true))
