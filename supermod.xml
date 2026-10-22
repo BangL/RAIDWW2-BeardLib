@@ -42,6 +42,7 @@
                     <post hook_id="lib/network/base/session_states/hoststateingame"/>
                     <post hook_id="lib/network/base/handlers/connectionnetworkhandler"/>
                     <post hook_id="lib/managers/raidjobmanager"/>
+                    <post hook_id="lib/tweak_data/operationstweakdata"/>
                     <post hook_id="lib/network/matchmaking/networkmatchmakingsteam"/>
                 </group>
             </group>

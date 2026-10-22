@@ -136,6 +136,23 @@ elseif F == "networkmatchmakingsteam" then
         publish(self)
         return result
     end
+elseif F == "operationstweakdata" then
+    -- The outlaw intel unlocks a random outlaw raid, from what the player who picks the document up has. A custom outlaw
+    -- raid is left out while somebody in the lobby could not play it (no BeardLib / no map), the drop would be lost.
+    function OperationsTweakData:get_random_unowned_consumable_raid()
+        local owned = Global.consumable_missions_manager.inventory
+        local list = {}
+        for _, id in ipairs(self:get_all_consumable_raids()) do
+            if not owned[id] then
+                local mission = self.missions[id]
+                local ok, vanilla, old, missing = pcall(Net.Blockers, Net, mission.custom and id or nil)
+                if not (mission.custom and ok and (#vanilla > 0 or #old > 0 or #missing > 0)) then
+                    table.insert(list, id)
+                end
+            end
+        end
+        return #list > 0 and list[math.random(1, #list)] or nil
+    end
 elseif F == "raidjobmanager" then
     -- the host selects a job: not with peers that cannot play it, the others get the job info first
     local set_selected_job = RaidJobManager.set_selected_job

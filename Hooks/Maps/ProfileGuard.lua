@@ -84,8 +84,13 @@ function BeardLib:ScrubProfileData(data)
     end
     local ids = self:CustomJobIds()
     if next(ids) then
+        -- the unlocked outlaw raids (custom jobs with consumable="true") are meant to be kept, the game drops the ones whose
+        -- job is not there (map removed) when it loads them
+        local consumables = data.ConsumableMissionManager
+        data.ConsumableMissionManager = nil
         scrub_save_slots(data, ids)
         scrub(data, ids, {})
+        data.ConsumableMissionManager = consumables
     end
 end
 

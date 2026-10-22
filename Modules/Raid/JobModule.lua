@@ -217,6 +217,8 @@ function JobModule:AddJobData(operations)
         data[slot.key] = data[slot.key] or icon and icon.id or JobModule.DEFAULT_ICON
     end
 
+    -- consumable="true": an outlaw raid, it is unlocked with the outlaw intel (documents) and used up when it is played
+    data.consumable = (data.consumable == true or data.consumable == "true") or nil
     -- excluded_continents="a,b": continents of the level that are not created when it is played as a raid (vanilla: "operation")
     data.excluded_continents = to_list(self._config.excluded_continents)
 
