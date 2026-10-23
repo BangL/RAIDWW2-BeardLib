@@ -26,6 +26,8 @@ LevelModule.levels_folder = "levels/mods/"
 --- Level modules by their level id and by the world name of their level tweak data (streamed levels are found by the latter).
 LevelModule._by_id = LevelModule._by_id or {}
 LevelModule._by_world_name = LevelModule._by_world_name or {}
+--- Level ids whose files stay loaded although their module was replaced by an update.
+LevelModule._kept = LevelModule._kept or {}
 
 BeardLib:RegisterModule("Level", LevelModule)
 
@@ -60,6 +62,7 @@ function LevelModule:init(...)
 
     self._config.id = tostring(self._config.id)
     self._addfiles_modules = {}
+    self._addfiles_kept = LevelModule._kept[self._config.id]
 
     self._inner_dir = Path:Combine(self.levels_folder, self._config.id)
     self._levels_less_path = self._inner_dir:gsub("levels/", "")
