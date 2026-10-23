@@ -310,7 +310,7 @@ function ModAssetsModule:StoreDownloadedAssets(data, id, request_info)
             mods_menu:SetModNormal(self)
         end
         if alive(coroutine) then
-            coroutine:parnet():remove(coroutine)
+            coroutine:parent():remove(coroutine)
         end
 
         if self.id then
