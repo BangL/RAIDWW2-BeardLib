@@ -52,8 +52,6 @@ beardlib_dev_mode_help: |
     Der Entwickler Modus zeigt mehr Fehler im Fehler Dialog an (z.B wenn eine Datei nicht lädt).
     Du solltest diesen Modus verwenden, wenn du BeardLib Mods jeder Art erstellst, damit du Probleme besser lösen kannst.
     Normalerweise wird dies im BLT log geloggt.
-# RAID has no text for this vanilla dialog (join request denied, code 4)
-dialog_does_not_own_heist: "Der Host spielt einen Custom-Job, den du nicht hast (oder gerade nicht bekommen kannst). Du kannst diesem Spiel nicht beitreten."
 beardlib_profile_guard: "Profilschutz"
 beardlib_profile_guard_help: "Hält Custom-Raids und -Level aus deinem gespeicherten Profil heraus: Unter ihren Namen wird nichts abgelegt (Statistiken, Fortschritt, ...). Kills, Erfahrung usw. werden normal gezählt."
 beardlib_important_notice_help: "Soll BeardLib dich benachrichtigen, wenn ein Update für eine wichtige Mod verfügbar ist?"
