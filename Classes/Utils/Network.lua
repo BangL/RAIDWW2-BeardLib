@@ -346,7 +346,59 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function Net:HasJob(job_id)
-    return tweak_data.operations.missions[job_id] ~= nil
+    local mission = tweak_data.operations.missions[job_id]
+    return mission ~= nil and not mission.stub
+end
+
+---------------------------------------------------------------------------------------------------
+-- Server browser
+---------------------------------------------------------------------------------------------------
+
+Net._stubs = {}
+
+--- The server browser lists a lobby only if it finds the name of its job in the tweak data. A lobby of a custom job
+--- that this client does not have is made known with a placeholder of the job (name and event from the lobby), so it is
+--- listed and can be joined, the job is downloaded then. Placeholders are no jobs (HasJob), see ClearStubs.
+function Net:AddLobbyStubs(lobby_info)
+    local missions = tweak_data.operations.missions
+    for i, room in ipairs(lobby_info.room_list or {}) do
+        local numbers = lobby_info.attribute_list and lobby_info.attribute_list[i] and lobby_info.attribute_list[i].numbers
+        local job_id = numbers and numbers[14]
+        if type(job_id) == "string" and job_id ~= "" and (not missions[job_id] or missions[job_id].stub) then
+            local lobby = Steam and Steam:lobby(room.room_id)
+            local value = lobby and lobby:key_value("beardlib_job")
+            local custom_id, info = self:ParseJobString(value)
+            if custom_id == job_id then
+                self:AddStub(job_id, info.name, tonumber(numbers[16]), numbers[1])
+            end
+        end
+    end
+end
+
+function Net:AddStub(job_id, name, mission_type, level_id)
+    local missions = tweak_data.operations.missions
+    local name_id = "beardlib_stub_" .. job_id
+    managers.localization:add_localized_strings({[name_id] = name ~= "" and name or job_id})
+    local mission = missions[job_id]
+    if not mission then
+        mission = {stub = true, name_id = name_id, xp = 0, events = {}}
+        missions[job_id] = mission
+        self._stubs[job_id] = true
+    end
+    if mission_type == OperationsTweakData.JOB_TYPE_OPERATION and type(level_id) == "string" then
+        mission.events[level_id] = {name_id = name_id}
+    end
+end
+
+--- Removes the placeholders, a real job of the same id is not touched.
+function Net:ClearStubs()
+    local missions = tweak_data.operations.missions
+    for job_id in pairs(self._stubs) do
+        if missions[job_id] and missions[job_id].stub then
+            missions[job_id] = nil
+        end
+    end
+    self._stubs = {}
 end
 
 local function tell_host(job_id, has)
@@ -477,13 +529,6 @@ function Net:PublishLobby(matchmake)
     local value = job and job.custom and self:JobString(job.job_id) or ""
     local changed = attributes.beardlib_job ~= value
     attributes.beardlib_job = value
-    -- The server browser reads the name of a running operation from the tweak data of the browsing client without a check
-    -- (MissionJoinGui:_set_game_description_data), an operation it does not have crashes it. A custom operation is
-    -- announced as a raid, that lookup is checked.
-    if job and job.custom and tonumber(attributes.mission_type) == OperationsTweakData.JOB_TYPE_OPERATION then
-        attributes.mission_type = OperationsTweakData.JOB_TYPE_RAID
-        changed = true
-    end
     if changed then
         matchmake.lobby_handler:set_lobby_data(attributes)
     end

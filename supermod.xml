@@ -44,6 +44,7 @@
                     <post hook_id="lib/managers/raidjobmanager"/>
                     <post hook_id="lib/tweak_data/operationstweakdata"/>
                     <post hook_id="lib/network/matchmaking/networkmatchmakingsteam"/>
+                    <post hook_id="lib/managers/menu/raid_menu/missionjoingui"/>
                 </group>
             </group>
 

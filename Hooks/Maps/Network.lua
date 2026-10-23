@@ -118,6 +118,18 @@ elseif F == "networkmatchmakingsteam" then
         return join_server(self, room_id, skip_showing_dialog, ...)
     end
 
+    -- jobs of the lobbies in the server browser that this client does not have
+    local call_callback = NetworkMatchMakingSTEAM._call_callback
+    function NetworkMatchMakingSTEAM:_call_callback(name, info, ...)
+        if name == "search_lobby" and type(info) == "table" then
+            local ok, err = pcall(Net.AddLobbyStubs, Net, info)
+            if not ok then
+                BeardLib:log("[Network] Could not add the jobs of the lobbies: %s", tostring(err))
+            end
+        end
+        return call_callback(self, name, info, ...)
+    end
+
     local function publish(self)
         local ok, err = pcall(Net.PublishLobby, Net, self)
         if not ok then
@@ -135,6 +147,13 @@ elseif F == "networkmatchmakingsteam" then
         local result = set_job_info_by_current_job(self, ...)
         publish(self)
         return result
+    end
+elseif F == "missionjoingui" then
+    -- the placeholders of the jobs in the browser go with it
+    local close = MissionJoinGui.close
+    function MissionJoinGui:close(...)
+        Net:ClearStubs()
+        return close(self, ...)
     end
 elseif F == "operationstweakdata" then
     -- The outlaw intel unlocks a random outlaw raid, from what the player who picks the document up has. A custom outlaw
