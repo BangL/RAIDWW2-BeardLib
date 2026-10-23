@@ -38,11 +38,14 @@ function Sync:DownloadMap(level_name, job_id, udata, done_callback, updating)
 					map.level_name = level_name
 					map.failed_map_downloaed = SimpleClbk(done_callback, false)
 					map.done_map_download = function()
+						-- An installed version is replaced in place, unless the map was loaded in this session already.
+						-- Its units and models stay in memory and cannot be unloaded safely, that needs a restart.
+						local reloaded = updating and Sync:UnloadMap(job_id)
 						BeardLib.Frameworks.Base:Load()
 						BeardLib.Frameworks.Base:InitMods() -- the modules (job, level) of the new mod, skips the initialized ones
 						BeardLib.Frameworks.Base:RegisterHooks()
 						if done_callback then
-							done_callback(tweak_data.operations.missions[job_id] ~= nil)
+							done_callback(tweak_data.operations.missions[job_id] ~= nil, false, reloaded)
 						end
 					end
 					map:DownloadAssets()
@@ -59,6 +62,42 @@ function Sync:DownloadMap(level_name, job_id, udata, done_callback, updating)
 	elseif done_callback then
 		done_callback(false)
 	end
+end
+
+--- Drops the installed mod of a job so that a new version on disk can be loaded in its place.
+--- Returns false and leaves everything as it is if the map was loaded in this session.
+function Sync:UnloadMap(job_id)
+    local mod = BeardLib.Utils:GetMapByJobId(job_id)
+    if not mod then
+        return false
+    end
+    local levels = {}
+    for _, module in pairs(mod._modules or {}) do
+        if module.type_name == "level" then
+            if module._currently_loaded or module._streamed_loaded or module._addfiles_kept then
+                return false
+            end
+            table.insert(levels, module)
+        end
+    end
+    for _, framework in pairs(BeardLib.Frameworks) do
+        for folder_name, loaded in pairs(framework._loaded_mods) do
+            if loaded == mod then
+                framework:RemoveMod(folder_name)
+                break
+            end
+        end
+    end
+    table.delete(BeardLib.Mods, mod)
+    for _, level in ipairs(levels) do
+        if LevelModule._by_id[level._config.id] == level then
+            LevelModule._by_id[level._config.id] = nil
+        end
+        if LevelModule._by_world_name[level._levels_less_path] == level then
+            LevelModule._by_world_name[level._levels_less_path] = nil
+        end
+    end
+    return true
 end
 
 function Sync:GetUpdateData(data)

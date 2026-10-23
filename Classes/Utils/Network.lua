@@ -410,8 +410,9 @@ function Net:OnJobInfo(sender, data)
     end
 end
 
---- Client: the job is there, but the host has another version. A loaded map is not replaced while the game runs,
---- so the new version is only there after a restart and the host is told that this peer cannot play it for now.
+--- Client: the job is there, but the host has another version. A map that was not loaded in this session is
+--- replaced right away. Otherwise the new version is only there after a restart and the host is told that this peer
+--- cannot play it for now.
 function Net:AskUpdate(job_id)
     local key = job_id .. "|" .. tostring(self._job_info[job_id].version)
     if self._asked[key] then
@@ -419,12 +420,12 @@ function Net:AskUpdate(job_id)
     end
     self._asked[key] = true
     local info = self._job_info[job_id]
-    local function done(loaded)
-        if loaded then
+    local function done(loaded, _, reloaded)
+        if loaded and not reloaded then
             self:Notify(loc("custom_map_updated_restart"))
         end
         self._asked[key] = nil
-        tell_host(job_id, false)
+        tell_host(job_id, loaded and reloaded or false)
     end
     if not info.update then
         self:Notify(loc("custom_map_missing_updater"))
@@ -502,8 +503,8 @@ function Net:PreJoin(room_id, continue)
         return false
     end
     managers.system_menu:close("join_server")
-    local function done(loaded, notified)
-        if outdated and loaded then -- the new version is there after a restart
+    local function done(loaded, notified, reloaded)
+        if outdated and loaded and not reloaded then -- the new version is there after a restart
             self:Notify(loc("custom_map_updated_restart"))
             loaded, notified = false, true
         end
