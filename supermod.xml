@@ -4,7 +4,7 @@
     author="GREAT BIG BUSHY BEARD &amp; Luffy"
     contact="https://modworkshop.net/mod/49760"
     priority="500"
-    version="5.0.4.3"
+    version="5.1.0.0"
     undisablable="true"
     is_library="true"
     color="0 0.44 1"
@@ -33,6 +33,19 @@
                     <post hook_id="lib/managers/gameplaycentralmanager"/>
                 </group>
                 <post hook_id="core/lib/utils/dev/editor/coreworlddefinition" :script_path="CoreWorldDefinition.lua"/>
+                <post hook_id="core/lib/managers/coreworldcollection" :script_path="CoreWorldCollection.lua"/>
+                <post hook_id="lib/managers/progressionmanager" :script_path="ProgressionManager.lua"/>
+                <post hook_id="lib/managers/savefilemanager" :script_path="ProfileGuard.lua"/>
+                <group :script_path="Network.lua">
+                    <post hook_id="lib/managers/dlcmanager"/>
+                    <post hook_id="lib/network/base/networkpeer"/>
+                    <post hook_id="lib/network/base/session_states/hoststateingame"/>
+                    <post hook_id="lib/network/base/handlers/connectionnetworkhandler"/>
+                    <post hook_id="lib/managers/raidjobmanager"/>
+                    <post hook_id="lib/tweak_data/operationstweakdata"/>
+                    <post hook_id="lib/network/matchmaking/networkmatchmakingsteam"/>
+                    <post hook_id="lib/managers/menu/raid_menu/missionjoingui"/>
+                </group>
             </group>
 
             <group :script_path="UI/">

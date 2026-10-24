@@ -2,19 +2,22 @@ mod_assets_error: "FEHLER!"
 menu_ok: OK
 bm_global_value_mod: MODS
 menu_l_global_value_mod: "Das ist in Modding Community Item!"
-custom_map_title: "Custom Heist: $map"
+custom_map_title: "Custom Job: $map"
 custom_map_download_available: "Download verfügbar"
-custom_map_alert: "Custom Heist Warnung"
+custom_map_alert: "Custom Job Warnung"
 custom_map_needs_download: |
-    Du musst den Heist downloaden um fortzufahren, Download starten?
+    Du musst den Job downloaden um fortzufahren, Download starten?
     $url
 custom_map_host_old_version: "Download kann nicht gestartet werden, da der Host eine veraltete Version von BeardLib nutzt!"
-custom_map_failed_download: "Download des Heists fehlgeschlagen"
-custom_map_missing_updater: "Der Download des Heists kann nicht gestartet werden, da die Map keinen Updater hat!"
-heist_contact_custom: "Custom Heists"
-heist_contact_custom_description: "Custom Heists sind komplett neue, von der Community erstellte Heists."
-custom_map_cant_download: "Der Heist, den der Host festgelegt hat, kann nicht heruntergeladen werden."
-custom_map_failed: "Beim runterladen vom Heist ist etwas schief gelaufen."
+custom_map_failed_download: "Download des Jobs fehlgeschlagen"
+custom_map_missing_updater: "Der Download des Jobs kann nicht gestartet werden, da die Map keinen Updater hat!"
+custom_map_cant_download: "Der Job, den der Host festgelegt hat, kann nicht heruntergeladen werden."
+custom_map_failed: "Beim runterladen vom Job ist etwas schief gelaufen."
+beardlib_net_vanilla_peers: "Der Custom-Job \"$job\" kann nicht mit $names gespielt werden: Sie haben kein BeardLib. Sie brauchen es (und den Job) oder müssen vorher gehen."
+beardlib_net_old_peers: "Der Custom-Job \"$job\" kann nicht mit $names gespielt werden: Ihr BeardLib ist zu alt für Custom-Jobs."
+beardlib_net_declined: "$names haben den Custom-Job \"$job\" nicht und haben ihn nicht heruntergeladen."
+beardlib_net_timeout: "$names haben den Custom-Job \"$job\" immer noch nicht, der Download dauert zu lange."
+beardlib_net_waiting: "Warte darauf, dass $names den Custom-Job herunterladen..."
 beardlib_mods_manager: "BeardLib Mods"
 beardlib_updates_available: "BeardLib Mods Manager: Updates verfügbar!"
 beardlib_updates_available_desc: "Öffne den BeardLib Mods Manager zum updaten"
@@ -49,6 +52,8 @@ beardlib_dev_mode_help: |
     Der Entwickler Modus zeigt mehr Fehler im Fehler Dialog an (z.B wenn eine Datei nicht lädt).
     Du solltest diesen Modus verwenden, wenn du BeardLib Mods jeder Art erstellst, damit du Probleme besser lösen kannst.
     Normalerweise wird dies im BLT log geloggt.
+beardlib_profile_guard: "Profilschutz"
+beardlib_profile_guard_help: "Hält Custom-Raids und -Level aus deinem gespeicherten Profil heraus: Unter ihren Namen wird nichts abgelegt (Statistiken, Fortschritt, ...). Kills, Erfahrung usw. werden normal gezählt."
 beardlib_important_notice_help: "Soll BeardLib dich benachrichtigen, wenn ein Update für eine wichtige Mod verfügbar ist?"
 beardlib_write_failed: "Fehler beim Schreiben in den Pfad :/"
 beardlib_achieves_title: "Custom Achievements"

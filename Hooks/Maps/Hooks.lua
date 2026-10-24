@@ -1,4 +1,4 @@
--- Contains a bunch of hooks to make custom heists work Mostly client-side code.
+-- Contains a bunch of hooks to make custom jobs work Mostly client-side code.
 -- Anything >100 lines of code should be its own file.
 
 local F = table.remove(RequiredScript:split("/"))
@@ -265,17 +265,6 @@ elseif F == "groupaitweakdata" then
         end
         return _read_mission_preset(self, tweak_data, ...)
     end
--- ----------------------------------------------------------------
--- FIXME: need replacement in raid, when actually showing custom jobs?
--- elseif F == "menumanager" then
--- 	local o_refresh = MenuManager.refresh_level_select
--- 	function MenuManager.refresh_level_select(...)
--- 		if Global.game_settings.level_id then
--- 			return o_refresh(...)
--- 		else
--- 			BeardLib:log("[Warning] Refresh level select was called while level id was nil!")
--- 		end
--- 	end
 ----------------------------------------------------------------
 elseif F == "gameplaycentralmanager" then
 	function GamePlayCentralManager:add_move_unit(unit, from, to, speed, done_callback)

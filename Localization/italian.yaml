@@ -11,8 +11,6 @@ custom_map_needs_download: |
 custom_map_host_old_version: "Impossibile iniziare il download del colpo perché l'host sta utilizzando una versione datata di BeardLib!"
 custom_map_failed_download: "Download del colpo personalizzato fallito"
 custom_map_missing_updater: "Impossibile iniziare il download del colpo personalizzato poiché la mappa non ha un ID per l'aggiornamento!"
-heist_contact_custom: "Colpi personalizzati"
-heist_contact_custom_description: "I colpi personalizzati sono delle aggiunte al gioco totalmente nuove e sono creati dalla comunità"
 custom_map_cant_download: "Il colpo che ha impostato l'host non può essere scaricato, sarai disconnesso."
 custom_map_failed: "Qualcosa è andato storto durante il download della mappa."
 beardlib_mods_manager: "Gestore delle mod di BeardLib"

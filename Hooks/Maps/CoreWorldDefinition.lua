@@ -23,10 +23,57 @@ function WorldDefinition:do_package_load(pkg)
     end
 end
 
+--- The custom level this world is created from. In the editor the level is the root world (BeardLib.current_level),
+--- a raid started from the camp is streamed into the camp's level, so it is found by the dir of the world.
+--- @return LevelModule|nil
+function WorldDefinition:custom_level()
+    if BeardLib.current_level then
+        return BeardLib.current_level
+    end
+    if self._custom_level == nil then
+        -- core modules have their own environment, LevelModule is a global one
+        self._custom_level = _G.LevelModule and _G.LevelModule.FromWorldDir(self._world_dir) or false
+    end
+    return self._custom_level or nil
+end
+
+local function level_id_of(world_def, level)
+    return level and level._config.id or Global.level_data and Global.level_data.level_id
+end
+
+-- The game loads the massunit of the world and of every instance without checking that it exists,
+-- loading a missing one crashes the engine. Custom levels and instances do not have to ship one (nor a file name).
+local WorldDefinition_create_massunit = WorldDefinition._create_massunit
+function WorldDefinition:_create_massunit(data, ...)
+    if not data.world_file and not data.file then
+        return -- the brush of the world has no massunit, e.g. a level without brushes
+    end
+    local path = data.world_file or self:world_dir() .. data.file
+    if not Application:editor() and not PackageManager:has(Idstring("massunit"), path:id()) then
+        return
+    end
+    return WorldDefinition_create_massunit(self, data, ...)
+end
+
+-- The game only creates the units of a continent that has "enabled" set, but the editor saves the continents with
+-- "enabled_in_simulation" only. Without this a custom level has no units at all.
+local WorldDefinition_parse_continents = WorldDefinition.parse_continents
+function WorldDefinition:parse_continents(...)
+    local result = WorldDefinition_parse_continents(self, ...)
+    for _, continent in pairs(self._continents or {}) do
+        if type(continent) == "table" and continent.enabled == nil then
+            continent.enabled = continent.enabled_in_simulation ~= false
+        end
+    end
+    return result
+end
+
 local WorldDefinition_load_world_package = WorldDefinition._load_world_package
 function WorldDefinition:_load_world_package(...)
-    if Global.level_data then
-        local level_tweak = _G.tweak_data.levels[Global.level_data.level_id]
+    local level = self:custom_level()
+    local level_id = level_id_of(self, level)
+    if level_id then
+        local level_tweak = _G.tweak_data.levels[level_id]
         if level_tweak then
             self._has_package = not not level_tweak.package
             if level_tweak.custom_packages then
@@ -38,17 +85,22 @@ function WorldDefinition:_load_world_package(...)
             end
         end
     end
-    if not BeardLib.current_level then
+    if not level then
         WorldDefinition_load_world_package(self, ...)
     end
 end
 
 local WorldDefinitionunload_packages = WorldDefinition.unload_packages
 function WorldDefinition:unload_packages(...)
+    local level = self:custom_level()
     if Global.level_data then
-        if BeardLib.current_level then
-            for _, module in pairs(BeardLib.current_level._addfiles_modules) do
-                module:Unload()
+        if level then
+            if level == BeardLib.current_level then
+                for _, module in pairs(level._addfiles_modules) do
+                    module:Unload()
+                end
+            else
+                level:UnloadStreamed()
             end
         end
 
@@ -70,7 +122,7 @@ function WorldDefinition:unload_packages(...)
             self._custom_loaded_packages = {}
         end
     end
-    if not BeardLib.current_level and self._continent_packages then
+    if not level and self._continent_packages then
         WorldDefinitionunload_packages(self, ...)
     end
 end
@@ -94,11 +146,13 @@ function WorldDefinition:_load_continent_package(path, ...)
 end
 
 function WorldDefinition:convert_mod_path(path)
-    if Global.level_data then
-        local level_tweak = _G.tweak_data.levels[Global.level_data.level_id]
+    local level = self:custom_level()
+    local level_id = level_id_of(self, level)
+    if level_id then
+        local level_tweak = _G.tweak_data.levels[level_id]
         if level_tweak then
-            if BeardLib.current_level and level_tweak.custom and path and string.begins(path, ".map/") then
-                path = path:gsub(".map", BeardLib.current_level._inner_dir)
+            if level and level_tweak.custom and path and string.begins(path, ".map/") then
+                path = path:gsub(".map", level._inner_dir)
             end
             if not PackageManager:has(Idstring("environment"), path:id()) then
                 return "core/environments/default"

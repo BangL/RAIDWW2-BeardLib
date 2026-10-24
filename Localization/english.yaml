@@ -2,19 +2,26 @@ mod_assets_error: "ERROR!"
 menu_ok: OK
 bm_global_value_mod: MODS
 menu_l_global_value_mod: "This is a modding community item!"
-custom_map_title: "Custom Heist: $map"
+custom_map_title: "Custom Job: $map"
 custom_map_download_available: "Download available"
-custom_map_alert: "Custom Heist Alert"
+custom_map_alert: "Custom Job Alert"
 custom_map_needs_download: |
-  You need to download the heist: $name before continuing, begin download?
+  You need to download the job: $name before continuing, begin download?
   $url
-custom_map_host_old_version: "Cannot begin download of custom heist because the host is running an old version of BeardLib!"
-custom_map_failed_download: "Failed to download custom heist"
-custom_map_missing_updater: "Cannot begin download of custom heist because the map does not have an updater!"
-heist_contact_custom: "Custom Heists"
-heist_contact_custom_description: "Custom heists are completely new heists added to the game and are made by the community"
-custom_map_cant_download: "The heist that the host has set cannot be downloaded, disconnecting."
-custom_map_failed: "Something went wrong while downloading the heist."
+custom_map_needs_update: |
+  The host plays another version of the job: $name, begin download of the update?
+  $url
+custom_map_updated_restart: "The job was updated. Restart the game to play it."
+custom_map_host_old_version: "Cannot begin download of custom job because the host is running an old version of BeardLib!"
+custom_map_failed_download: "Failed to download custom job"
+custom_map_missing_updater: "Cannot begin download of custom job because the map does not have an updater!"
+custom_map_cant_download: "The job that the host has set cannot be downloaded, disconnecting."
+custom_map_failed: "Something went wrong while downloading the job."
+beardlib_net_vanilla_peers: "The custom job \"$job\" cannot be played with $names: they do not have BeardLib. They need it (and the job) or have to leave first."
+beardlib_net_old_peers: "The custom job \"$job\" cannot be played with $names: their BeardLib is too old for custom jobs."
+beardlib_net_declined: "$names do not have the custom job \"$job\" and did not download it."
+beardlib_net_timeout: "$names still do not have the custom job \"$job\", the download took too long."
+beardlib_net_waiting: "Waiting for $names to download the custom job..."
 beardlib_mods_manager: "BeardLib Mods"
 beardlib_updates_available: "BeardLib Mods Manager: Updates available!"
 beardlib_updates_available_desc: "Visit the BeardLib Mods Manager to update them"
@@ -50,6 +57,8 @@ beardlib_dev_mode_help: |
   Developer mode adds more errors to show in the errors dialog (Like if a file failed to load).
   You should use this mode when developing any type of BeardLib mod so you can resolve the issues.
   Normally, this is logged into the BLT log.
+beardlib_profile_guard: "Profile guard"
+beardlib_profile_guard_help: "Keeps custom raids and levels out of your saved profile: nothing is stored under their names (statistics, progression, ...). Kills, experience and so on are counted as usual."
 beardlib_important_notice_help: "Should BeardLib notify you when there's an update for an important mod?"
 beardlib_write_failed: "Failed writing to path :/"
 beardlib_achieves_title: "Custom Achievements"

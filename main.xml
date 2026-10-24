@@ -9,7 +9,7 @@
 	image="guis/textures/beardlib_logo"
 	color="Color(0.8,0.8,0.8)"
 	auto_image_color="true"
-	version="5.0.4.3">
+	version="5.1.0.0">
 	<load_modules>
 		<AddFiles directory="Assets">
 			<unit path="core/units/cubemap_gizmo/cubemap_gizmo" force_if_not_loaded="true"/>
@@ -28,6 +28,7 @@
 				<option name="MenuColor" type="color" default_value="Color('DE4A3E')"/>
 				<option name="ImportantNotice" type="boolean" default_value="true"/>
 				<option name="ShowErrorsDialog" type="boolean" default_value="true"/>
+				<option name="ProfileGuard" type="boolean" default_value="true"/>
 				<option name="DevMode" type="boolean" default_value="false"/>
 				<option name="GithubUpdates" type="boolean" default_value="false"/>
 				<option name="LogSounds" type="boolean" default_value="false"/>
@@ -64,6 +65,7 @@
 				<class file="XML.lua"/>
 				<class file="Builders.lua"/>
 				<class file="Sync.lua"/>
+				<class file="Network.lua"/>
 			</classes>
 	
 			<classes directory="Managers">
@@ -144,7 +146,6 @@
 		<value_node value="ExecuteCode"/>
 		<value_node value="OverrideInstigator"/>
 		<value_node value="BLCustomAchievement"/>
-		<!-- <value_node value="AIGroupType"/> FIXME? -->
 		<value_node value="RelativeTeleport"/>
 		<value_node value="RelativeTeleportTarget"/>
 	</mission_elements>

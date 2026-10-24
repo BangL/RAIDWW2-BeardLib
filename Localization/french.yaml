@@ -11,8 +11,6 @@ custom_map_needs_download: |
 custom_map_host_old_version: "Impossible de commencer le téléchargement car l'hôte utilise une ancienne version de BeardLib !"
 custom_map_failed_download: "Échec du téléchargement du braquage personnalisé"
 custom_map_missing_updater: "Impossible de commencer le téléchargement car le braquage ne supporte pas les mises à jour !"
-heist_contact_custom: "Braquage personnalisé"
-heist_contact_custom_description: "Les braquages personnalisés sont des tout nouveaux braquages ajoutés au jeu et sont faits par la communauté"
 custom_map_cant_download: "Le braquage que l'hôte a choisi n'a pa pu être téléchargé. Déconnexion..."
 custom_map_failed: "Quelque chose s'est mal passé pendant le téléchargement du braquage."
 beardlib_mods_manager: "Gestionnaire des mods BeardLib"

@@ -15,7 +15,7 @@ function Sync:SyncGameSettings(peer_id)
     end
 end
 
-function Sync:DownloadMap(level_name, job_id, udata, done_callback)
+function Sync:DownloadMap(level_name, job_id, udata, done_callback, updating)
     if not udata then
         return
 	end
@@ -27,26 +27,41 @@ function Sync:DownloadMap(level_name, job_id, udata, done_callback)
 		end
 		QuickDialog({
 			title = managers.localization:text("custom_map_alert"),
-			message = managers.localization:text("custom_map_needs_download", {url = download_url, name = level_name}),
+			message = managers.localization:text(updating and "custom_map_needs_update" or "custom_map_needs_download", {url = download_url, name = level_name}),
 			no = "No",
 			no_callback = SimpleClbk(done_callback, false, true),
 			items = {
 				{"Yes", function(dialog)
 					local map = DownloadCustomMap:new()
+					-- An installed map is updated where it is, it may be in another folder than the one of the base framework
+					-- (the Maps folder, for one), and loaded by the framework it belongs to.
+					local old_mod = updating and BeardLib.Utils:GetMapByJobId(job_id) or nil
+					if old_mod and Sync:IsMapRunning(old_mod) then
+						-- its files are in use and would be replaced while it is played
+						BeardLib:log("[WARN] The map %s is running, not updating it now", tostring(job_id))
+						if done_callback then
+							done_callback(false)
+						end
+						return
+					end
+					local framework = old_mod and old_mod._framework or BeardLib.Frameworks.Base
+					local installed_in = old_mod and old_mod.ModPath and old_mod.ModPath:match("^(.*)/[^/]+/?$")
+					if installed_in and installed_in ~= "" then
+						map.config.custom_install_directory = installed_in
+					end
 					map.provider = provider
 					map.id = udata.id
 					map.level_name = level_name
 					map.failed_map_downloaed = SimpleClbk(done_callback, false)
 					map.done_map_download = function()
-						BeardLib.Frameworks.Base:Load()
-						BeardLib.Frameworks.Base:RegisterHooks()
-						-- FIXME?
-						log("FIXME: refresh online games")
-						blt.flush_log()
-						-- managers.job:_check_add_heat_to_jobs()
-						-- managers.crimenet:find_online_games(Global.game_settings.search_friends_only)
+						-- An installed version is replaced in place, unless the map is running (the files of a map that was
+						-- played are unloaded when its raid ended)
+						local reloaded = updating and Sync:UnloadMap(job_id)
+						framework:Load()
+						framework:InitMods() -- the modules (job, level) of the new mod, skips the initialized ones
+						framework:RegisterHooks()
 						if done_callback then
-							done_callback(tweak_data.operations.missions[job_id] ~= nil)
+							done_callback(tweak_data.operations.missions[job_id] ~= nil, false, reloaded)
 						end
 					end
 					map:DownloadAssets()
@@ -63,6 +78,53 @@ function Sync:DownloadMap(level_name, job_id, udata, done_callback)
 	elseif done_callback then
 		done_callback(false)
 	end
+end
+
+--- Whether a map is being played, its files cannot be replaced then.
+function Sync:IsMapRunning(mod)
+    for _, module in pairs(mod and mod._modules or {}) do
+        if module.type_name == "level" and (module._currently_loaded or module._streamed_loaded) then
+            return true
+        end
+    end
+    return false
+end
+
+--- Drops the installed mod of a job so that a new version on disk can be loaded in its place.
+--- Returns false and leaves everything as it is if the map is running.
+function Sync:UnloadMap(job_id)
+    local mod = BeardLib.Utils:GetMapByJobId(job_id)
+    if not mod then
+        return false
+    end
+    if self:IsMapRunning(mod) then
+        return false
+    end
+    local levels = {}
+    for _, module in pairs(mod._modules or {}) do
+        if module.type_name == "level" then
+            module:UnloadAssets() -- normally done when its raid ended, nothing is left of it in the new version
+            table.insert(levels, module)
+        end
+    end
+    for _, framework in pairs(BeardLib.Frameworks) do
+        for folder_name, loaded in pairs(framework._loaded_mods) do
+            if loaded == mod then
+                framework:RemoveMod(folder_name)
+                break
+            end
+        end
+    end
+    table.delete(BeardLib.Mods, mod)
+    for _, level in ipairs(levels) do
+        if LevelModule._by_id[level._config.id] == level then
+            LevelModule._by_id[level._config.id] = nil
+        end
+        if LevelModule._by_world_name[level._levels_less_path] == level then
+            LevelModule._by_world_name[level._levels_less_path] = nil
+        end
+    end
+    return true
 end
 
 function Sync:GetUpdateData(data)

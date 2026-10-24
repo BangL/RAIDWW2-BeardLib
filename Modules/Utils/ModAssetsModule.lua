@@ -291,11 +291,19 @@ function ModAssetsModule:StoreDownloadedAssets(data, id, request_info)
         end
 
         -- Move extracted assets from temp dir to install dir and delete temp dir
+        -- Moving onto an existing path fails silently, so an update would leave the old version in place
+        local function move_in(v)
+            local target = Application:nice_path(dir .. "/" .. v)
+            if config.replace_existing and FileIO:Exists(target) then
+                FileIO:Delete(target)
+            end
+            FileIO:MoveTo(Application:nice_path(temp_extract_path .. "/" .. v), target)
+        end
         for _, v in pairs(extracted_folders) do
-            FileIO:MoveTo(Application:nice_path(temp_extract_path .. "/" .. v), Application:nice_path(dir .. "/" .. v))
+            move_in(v)
         end
         for _, v in pairs(extracted_files) do
-            FileIO:MoveTo(Application:nice_path(temp_extract_path .. "/" .. v), Application:nice_path(dir .. "/" .. v))
+            move_in(v)
         end
         FileIO:Delete(temp_extract_path)
 
@@ -310,7 +318,7 @@ function ModAssetsModule:StoreDownloadedAssets(data, id, request_info)
             mods_menu:SetModNormal(self)
         end
         if alive(coroutine) then
-            coroutine:parnet():remove(coroutine)
+            coroutine:parent():remove(coroutine)
         end
 
         if self.id then
@@ -321,7 +329,7 @@ end
 
 DownloadCustomMap = DownloadCustomMap or class(ModAssetsModule)
 function DownloadCustomMap:init()
-    self.config = {custom_install_directory = BeardLib.Frameworks.Base._directory, dont_delete = true}
+    self.config = {custom_install_directory = BeardLib.Frameworks.Base._directory, dont_delete = true, replace_existing = true}
 end
 
 function DownloadCustomMap:DownloadFailed()

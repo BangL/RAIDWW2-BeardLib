@@ -11,8 +11,6 @@ custom_map_needs_download: |
 custom_map_host_old_version: "Não pode baixar o mapa porque o Host tá com uma versão antiga de BeardLib!"
 custom_map_failed_download: "Ocorreu um erro durante o download do mapa"
 custom_map_missing_updater: "Não pode começar o download do mapa, porque o mapa não tem o Updater!"
-heist_contact_custom: "Mapas Customizados"
-heist_contact_custom_description: "Mapas Customizados são mapas completamente novos que são feitos pela a comunidade e adicionados no jogo"
 custom_map_cant_download: "O mapa que o Host carregou não pode ser baixado, saindo do Lobby."
 custom_map_failed: "Um erro ocorreu durante o download do Mapa."
 beardlib_mods_manager: "Gerenciador de Mods BeardLib"
