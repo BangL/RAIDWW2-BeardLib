@@ -54,7 +54,7 @@ function LevelModule:init(...)
         return false
     end
 
-    if self._mod:MinLibVer() >= 4.5 then
+    if Version:new(self._mod:MinLibVer()) >= Version:new("4.5") then
         self.levels_folder = Path:CombineDir(self.levels_folder, self._mod.Name)
     end
 
@@ -276,7 +276,7 @@ function InstanceModule:init(...)
         return false
     end
 
-    if self._mod:MinLibVer() >= 4.5 then
+    if Version:new(self._mod:MinLibVer()) >= Version:new("4.5") then
         self.levels_folder = Path:CombineDir(self.levels_folder, self._mod.Name)
     end
 
