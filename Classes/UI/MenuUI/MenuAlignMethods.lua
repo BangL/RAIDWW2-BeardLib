@@ -96,7 +96,8 @@ function Item:AlignItemsNormal(reversed)
     end
     local max_h, prev_item, last_positioned_item = 0, nil, nil
     local function align(item)
-        if item then
+        -- while a menu is recreated, items can still point to the panels of the removed one
+        if item and alive(item:Panel()) then
             if item:_Visible() then
                 if not item.ignore_align then
                     local offset = item:Offset()
@@ -142,7 +143,8 @@ function Item:AlignItemsGrid(reversed)
     local max_h, max_right, max_y = 0, 0, 0
 
     local function align(item)
-        if item then
+        -- while a menu is recreated, items can still point to the panels of the removed one
+        if item and alive(item:Panel()) then
             if item:_Visible() then
                 if not item.ignore_align then
                     local panel = item:Panel()
@@ -199,7 +201,8 @@ function Item:AlignItemsCenteredGrid(reversed)
     end
 
     local function align(item)
-        if item then
+        -- while a menu is recreated, items can still point to the panels of the removed one
+        if item and alive(item:Panel()) then
             if item:_Visible() then
                 local panel = item:Panel()
                 if not item.ignore_align then
@@ -266,7 +269,8 @@ function Item:AlignItemsGridFromRight(reversed, dbg)
     local max_h, max_right, max_y = 0, items_w, 0
 
     local function align(item)
-        if item then
+        -- while a menu is recreated, items can still point to the panels of the removed one
+        if item and alive(item:Panel()) then
             if item:_Visible() then
                 if not item.ignore_align then
                     local panel = item:Panel()
