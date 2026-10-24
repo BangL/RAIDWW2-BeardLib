@@ -33,27 +33,33 @@ function Sync:DownloadMap(level_name, job_id, udata, done_callback, updating)
 			items = {
 				{"Yes", function(dialog)
 					local map = DownloadCustomMap:new()
-					map.provider = provider
-					-- the old version is still there at this point, see what the update changes in it
-					map.config.before_replace = function(temp_path, folders, install_dir)
-						map.heavy_changed = false
-						for _, folder in pairs(folders) do
-							local old_path = Path:Combine(install_dir, folder)
-							if FileIO:DirectoryExists(old_path) and Sync:HeavyFilesChanged(old_path, Path:Combine(temp_path, folder)) then
-								map.heavy_changed = true
-							end
+					-- An installed map is updated where it is, it may be in another folder than the one of the base framework
+					-- (the Maps folder, for one), and loaded by the framework it belongs to.
+					local old_mod = updating and BeardLib.Utils:GetMapByJobId(job_id) or nil
+					if old_mod and Sync:IsMapRunning(old_mod) then
+						-- its files are in use and would be replaced while it is played
+						BeardLib:log("[WARN] The map %s is running, not updating it now", tostring(job_id))
+						if done_callback then
+							done_callback(false)
 						end
+						return
 					end
+					local framework = old_mod and old_mod._framework or BeardLib.Frameworks.Base
+					local installed_in = old_mod and old_mod.ModPath and old_mod.ModPath:match("^(.*)/[^/]+/?$")
+					if installed_in and installed_in ~= "" then
+						map.config.custom_install_directory = installed_in
+					end
+					map.provider = provider
 					map.id = udata.id
 					map.level_name = level_name
 					map.failed_map_downloaed = SimpleClbk(done_callback, false)
 					map.done_map_download = function()
-						-- An installed version is replaced in place, unless the map was loaded in this session already.
-						-- Its units and models stay in memory and cannot be unloaded safely, that needs a restart.
-						local reloaded = updating and Sync:UnloadMap(job_id, map.heavy_changed)
-						BeardLib.Frameworks.Base:Load()
-						BeardLib.Frameworks.Base:InitMods() -- the modules (job, level) of the new mod, skips the initialized ones
-						BeardLib.Frameworks.Base:RegisterHooks()
+						-- An installed version is replaced in place, unless the map is running (the files of a map that was
+						-- played are unloaded when its raid ended)
+						local reloaded = updating and Sync:UnloadMap(job_id)
+						framework:Load()
+						framework:InitMods() -- the modules (job, level) of the new mod, skips the initialized ones
+						framework:RegisterHooks()
 						if done_callback then
 							done_callback(tweak_data.operations.missions[job_id] ~= nil, false, reloaded)
 						end
@@ -74,27 +80,10 @@ function Sync:DownloadMap(level_name, job_id, udata, done_callback, updating)
 	end
 end
 
--- Files that are only read when a map is set up. Anything else (units, models, textures, ...) is held by the engine
--- once loaded, a changed one cannot be replaced while the game runs.
-local LIGHT_EXTENSIONS = {xml = true, lua = true, json = true, txt = true, md = true, yaml = true, csv = true, ini = true,
-    png = true, jpg = true, gif = true}
-
---- Whether an existing file of the old version of a map is different or gone in the new one, and is not a light one.
---- New files are no problem, nothing stale is held for them.
-function Sync:HeavyFilesChanged(old_dir, new_dir)
-    for _, name in pairs(FileIO:GetFiles(old_dir)) do
-        local ext = (name:match("%.([^.]+)$") or ""):lower()
-        if not LIGHT_EXTENSIONS[ext] then
-            local old_file = Path:Combine(old_dir, name)
-            local new_file = Path:Combine(new_dir, name)
-            if not FileIO:Exists(new_file) or file.FileHash(old_file) ~= file.FileHash(new_file) then
-                return true
-            end
-        end
-    end
-    for _, folder in pairs(FileIO:GetFolders(old_dir)) do
-        local new_folder = Path:Combine(new_dir, folder)
-        if not FileIO:DirectoryExists(new_folder) or self:HeavyFilesChanged(Path:Combine(old_dir, folder), new_folder) then
+--- Whether a map is being played, its files cannot be replaced then.
+function Sync:IsMapRunning(mod)
+    for _, module in pairs(mod and mod._modules or {}) do
+        if module.type_name == "level" and (module._currently_loaded or module._streamed_loaded) then
             return true
         end
     end
@@ -102,26 +91,19 @@ function Sync:HeavyFilesChanged(old_dir, new_dir)
 end
 
 --- Drops the installed mod of a job so that a new version on disk can be loaded in its place.
---- Returns false and leaves everything as it is if the map was loaded in this session and the update changes files
---- the engine holds (heavy_changed, nil if unknown), unless the experimental option ReloadLoadedMaps is on.
-function Sync:UnloadMap(job_id, heavy_changed)
+--- Returns false and leaves everything as it is if the map is running.
+function Sync:UnloadMap(job_id)
     local mod = BeardLib.Utils:GetMapByJobId(job_id)
     if not mod then
+        return false
+    end
+    if self:IsMapRunning(mod) then
         return false
     end
     local levels = {}
     for _, module in pairs(mod._modules or {}) do
         if module.type_name == "level" then
-            if module._currently_loaded or module._streamed_loaded or module._addfiles_kept then
-                if heavy_changed == false then
-                    -- nothing the engine holds is replaced, its files must not be added a second time
-                    LevelModule._kept[module._config.id] = module._addfiles_kept or module._streamed_loaded or nil
-                elseif not BeardLib.Options:GetValue("ReloadLoadedMaps") then
-                    return false
-                else
-                    BeardLib:log("[WARN] Reloading map %s that was loaded in this session already", tostring(job_id))
-                end
-            end
+            module:UnloadAssets() -- normally done when its raid ended, nothing is left of it in the new version
             table.insert(levels, module)
         end
     end

@@ -291,10 +291,6 @@ function ModAssetsModule:StoreDownloadedAssets(data, id, request_info)
         end
 
         -- Move extracted assets from temp dir to install dir and delete temp dir
-        if config.before_replace then
-            config.before_replace(temp_extract_path, extracted_folders, dir)
-        end
-
         -- Moving onto an existing path fails silently, so an update would leave the old version in place
         local function move_in(v)
             local target = Application:nice_path(dir .. "/" .. v)

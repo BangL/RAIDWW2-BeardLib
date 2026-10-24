@@ -192,7 +192,15 @@ function BeardLibFileManager:ScriptReplaceFile(ext, path, file, options)
 	local k_path = path:key()
 	self.modded_files[k_ext] = self.modded_files[k_ext] or {}
 	self.modded_files[k_ext][k_path] = self.modded_files[k_ext][k_path] or {}
-	table.insert(self.modded_files[k_ext][k_path], table.merge(options, {file = file}))
+	local entry = table.merge(options, {file = file})
+	-- a level that is started again (or a map that was updated) registers its files again, they replace the earlier entry
+	for i, existing in ipairs(self.modded_files[k_ext][k_path]) do
+		if existing.file == file then
+			self.modded_files[k_ext][k_path][i] = entry
+			return
+		end
+	end
+	table.insert(self.modded_files[k_ext][k_path], entry)
 end
 
 function BeardLibFileManager:ScriptReplace(ext, path, tbl, options)

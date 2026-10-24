@@ -457,13 +457,6 @@ function BeardLibModsMenu:OpenSettings()
                 value = BeardLib.Options:GetValue("LogInit"),
                 on_callback = ClassClbk(self, "SetOption")
             })
-            holder:Toggle({
-                name = "ReloadLoadedMaps",
-                text = "beardlib_reload_loaded_maps",
-                help = "beardlib_reload_loaded_maps_help",
-                value = BeardLib.Options:GetValue("ReloadLoadedMaps"),
-                on_callback = ClassClbk(self, "SetOption")
-            })
             if BeardLib.DevMode then
                 holder:Button({
                     name = "ErrorsDialog",

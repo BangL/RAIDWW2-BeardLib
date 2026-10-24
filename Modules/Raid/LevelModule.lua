@@ -26,8 +26,6 @@ LevelModule.levels_folder = "levels/mods/"
 --- Level modules by their level id and by the world name of their level tweak data (streamed levels are found by the latter).
 LevelModule._by_id = LevelModule._by_id or {}
 LevelModule._by_world_name = LevelModule._by_world_name or {}
---- Level ids whose files stay loaded although their module was replaced by an update.
-LevelModule._kept = LevelModule._kept or {}
 
 BeardLib:RegisterModule("Level", LevelModule)
 
@@ -62,7 +60,6 @@ function LevelModule:init(...)
 
     self._config.id = tostring(self._config.id)
     self._addfiles_modules = {}
-    self._addfiles_kept = LevelModule._kept[self._config.id]
 
     self._inner_dir = Path:Combine(self.levels_folder, self._config.id)
     self._levels_less_path = self._inner_dir:gsub("levels/", "")
@@ -121,9 +118,9 @@ function LevelModule:Load()
         end
     end
 
-    -- the files of a streamed level stay loaded after it ended (see UnloadStreamed), do not add them a second time
+    -- the files of a streamed level are unloaded when it ends (see UnloadStreamed), the next start adds them again
     self._addfiles_modules = self._addfiles_modules or {}
-    if not self._addfiles_kept then
+    if not next(self._addfiles_modules) then
 
         self._add_path = self._level_dir.."/add.xml"
         if self._config.add or FileIO:Exists(Path:CombineDir(self._mod.ModPath, self._add_path)) then
@@ -191,9 +188,16 @@ function LevelModule:UnloadStreamed()
         return
     end
     self._streamed_loaded = nil
-    -- The files (units, cooked physics, models) stay loaded: unloading them and loading them again with the next start
-    -- of the level crashes in physx.
-    self._addfiles_kept = true
+    self:UnloadAssets()
+end
+
+--- Unloads the files the level added, the next start adds them again.
+function LevelModule:UnloadAssets()
+    for _, module in pairs(self._addfiles_modules or {}) do
+        module:Unload()
+    end
+    self._addfiles_modules = {}
+    self._loaded_addfiles = nil
 end
 
 function LevelModule:AddLevelDataToTweak(l_self)

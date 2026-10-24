@@ -115,8 +115,6 @@ beardlib_mod_optional_version_help: |
   These are likely in an expermiental state and may contain new features and bugs.
 beardlib_achieves_no_pkg: "Select a package on the left panel to show the achievements related to it."
 beardlib_log_init: "Log initialization of mods"
-beardlib_reload_loaded_maps: "Update maps without restart (experimental)"
-beardlib_reload_loaded_maps_help: "Also replaces a map that was already played in this session without restarting the game. Its units and models are not unloaded, this may crash."
 beardlib_log_init_help: "Logs initialization of mods when they are initialized."
 beardlib_custom_maps_only: "Custom Maps Only"
 beardlib_github_updates: "GitHub / Beta Updates"

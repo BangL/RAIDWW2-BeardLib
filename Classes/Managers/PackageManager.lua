@@ -313,6 +313,15 @@ function BeardLibPackageManager:AddFileWithCheck(ext, path, file)
 	end
 end
 
+--- Removes the database entry of a file that was added from the mod itself. The files of the game that were only hooked
+--- (from_db) have no entry of ours, and removing the entry of one of those would take away the file of the game.
+function BeardLibPackageManager:RemoveOwnFile(ids_ext, ids_path)
+    local entry = Managers.File:Get(ids_ext, ids_path)
+    if entry and entry.file then
+        Managers.File:RemoveFile(ids_ext, ids_path)
+    end
+end
+
 function BeardLibPackageManager:UnloadConfig(config)
     for _, child in ipairs(config) do
         if type(child) == "table" then
@@ -326,7 +335,7 @@ function BeardLibPackageManager:UnloadConfig(config)
                         if child.unload ~= false then
                             Managers.File:UnloadAsset(ids_ext, ids_path)
                         end
-                        Managers.File:RemoveFile(ids_ext, ids_path)
+                        self:RemoveOwnFile(ids_ext, ids_path)
                     end
                 end
                 
@@ -361,7 +370,7 @@ function BeardLibPackageManager:UnloadConfig(config)
                         if child.unload ~= false then
                             Managers.File:UnloadAsset(TEXTURE_IDS, ids_path)
                         end
-                        Managers.File:RemoveFile(TEXTURE_IDS, ids_path)
+                        self:RemoveOwnFile(TEXTURE_IDS, ids_path)
                     end
                 end
             elseif typ and path then
@@ -372,7 +381,7 @@ function BeardLibPackageManager:UnloadConfig(config)
                     if child.unload ~= false then
                         Managers.File:UnloadAsset(ids_ext, ids_path)
                     end
-                    Managers.File:RemoveFile(ids_ext, ids_path)
+                    self:RemoveOwnFile(ids_ext, ids_path)
                 end
             else
                 self:Err("Some node does not contain a definition for both type and path")
