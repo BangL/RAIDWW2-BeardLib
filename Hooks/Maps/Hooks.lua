@@ -204,6 +204,9 @@ elseif F == "coreelementinstance" then
     core:import("CoreMissionScriptElement")
     function ElementInstancePoint:client_on_executed(...)
         self:on_executed(...)
+        -- the game does this too: the executions the host sent before the instance existed are queued on the client
+        -- and only fired from here (otherwise e.g. the dynamite bag of the castle drop pod is never hidden)
+        managers.worldcollection:check_queued_client_mission_executions()
     end
 ----------------------------------------------------------------
 elseif F == "coreelementshape"  or F == "coreelementarea" then
